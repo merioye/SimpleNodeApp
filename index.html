@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang='en'>
+    <head>
+        <meta charset='utf-8'/>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
+        <title>Node Weather App</title>
+        <!-- Your font awesome link goes here -->
+        <!-- <script src=''   crossorigin=''></script> -->
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body{
+                height: 100vh;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: #e8e8e8;
+            }
+            .main-container{
+                height: 500px;
+                width: 330px;
+                border-radius: 15px;
+                box-shadow: 0px 0px 20px -10px black;
+            }
+            
+            .content-container{
+                width: 100%;
+                height: 60%;
+                background: #cbddf7;
+                border-bottom-left-radius: 15px;
+                border-bottom-right-radius: 15px;
+            }
+            .country-info{
+                text-align: center;
+                padding-top: 40px;
+                font-size: 2rem;
+            }
+            .user-icon{
+                margin-right: 10px;
+                animation-name: animate-user-icon;
+                animation-duration: 2s;
+                animation-iteration-count: infinite;
+                animation-direction: alternate;
+                animation-timing-function: linear;
+            }
+            @keyframes animate-user-icon{
+                from{transform: rotate(45deg)}
+                to{transform: rotate(-45deg)}
+            }
+            .date{
+                text-align: center;
+                margin-top: 10px;
+                color: #646566;
+            }
+            .temp{
+                text-align: center;
+                margin-top: 40px;
+            }
+            .min-max{
+                text-align: center;
+                margin-top: 10px;
+                color: #646566;
+            }
+
+            .icon-container{
+                width: 100%;
+                height: 40%;
+                background: #8faedd;
+                border-top-left-radius: 15px;
+                border-top-right-radius: 15px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .weather-icon{
+                color: green;
+                font-size: 5rem;
+            }
+        </style>
+    </head>
+    <body>
+        <div class='main-container'>
+            <div class='icon-container'></div>
+            <div class='content-container'>
+                <h1 class='country-info'></h1>
+                <p class='date'></p>
+                <h1 class='temp'></h1>
+                <p class='min-max'></p>
+            </div>
+        </div>
+    </body>
+    <script>
+        const countryHeading = document.querySelector('.country-info');
+        const date = document.querySelector('.date');
+        const temp = document.querySelector('.temp');
+        const minMaxTemp = document.querySelector('.min-max');
+        const weatherIcon = document.querySelector('.icon-container');
+        const fetchWeather = async ()=>{
+            try{
+                const res = await fetch('https://api.openweathermap.org/data/2.5/weather?q=okara&appid=${Your Api Key goes here}&units=metric');
+                if(!res.ok){
+                    throw new Error(res.status);
+                }
+                const data = await res.json();
+                countryHeading.innerHTML = `<h1 class='country-info'><i class="fas fa-street-view user-icon"></i>${data.name}, ${data.sys.country}</h1>`;
+                date.textContent = new Date().toLocaleString();
+                temp.textContent = data.main.temp+ ' C';
+                minMaxTemp.textContent = `Max ${data.main.temp_max} C | Min ${data.main.temp_min} C`;
+                if(data.weather[0].main==='Clear'){
+                    weatherIcon.innerHTML = `<i class="fas fa-sun weather-icon"></i>`;
+                }else if(data.weather[0].main==='Clouds'){
+                    weatherIcon.innerHTML = '<i class="fas fa-cloud weather-icon"></i>'
+                }else if(data.weather[0].main==='Rain'){
+                    weatherIcon.innerHTML = '<i class="fas fa-cloud-rain weather-icon"></i>';
+                }else{
+                    weatherIcon.innerHTML = '<i class="fas fa-cloud-sun weather-icon"></i>';
+                }
+            }catch(e){
+                console.log(e);
+            }
+        }
+        fetchWeather();
+    </script>
+</html>
